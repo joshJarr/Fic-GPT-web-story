@@ -19,6 +19,6 @@ export default async (req, res) => {
 
 
 
-  const text = {text: 'Hello World!'};
+  const text = {text: 'Hello World!!!'};
   res.status(200).json({ text });
 };
