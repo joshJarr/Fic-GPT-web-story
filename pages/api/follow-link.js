@@ -140,8 +140,18 @@ export default async (req, res) => {
 
 function generatePrompt(description, context) {
   return `
-  I have a story about an inspector who is attending a crime on a boat.
-  Could you write a 50 word paragraph following on from my story in where ${description}?
+  Eccentric billionaire Richard Pembroke has been murdered while on board his yacht.
+  The only crew member on board are gathered around the top deck and the police have cordoned off the area.
+  You play the part of an investigator who has been called in to solve the case.
+  The five crew members are:
+   - The captain, who is a stoic and cold leader.
+   - The first mate, who is a young and ambitious sailor with an addiction to gambling.
+   - Mr Pembroke's Personal Trainer, who met Mr Pembroke at a vegan festival 5 years ago. He is on board to setup gym facilities for the billionaire.
+   - The chef, a childhood friend of Mr Pembroke who has been cooking for him for over 20 years.
+   - An engineer, who was called by the Captain to fix a problem with the engine.
+   Finally Mr Pembrokes trusty dog, who is a 3 year old poodle called 'Biscuit'.
+
+  Could you write a 20 word sentence following on from my story in where ${description}?
 
   The story so far is this:
   ${context}`;
