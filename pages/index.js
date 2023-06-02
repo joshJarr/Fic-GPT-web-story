@@ -7,11 +7,13 @@ export default function Home() {
   const [currentTimelineEventId, setCurrentTimelineEventId] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
+  const [context, setContext] = useState('');
   const [links, setLinks] = useState([]);
 
   const resetUser = () => {
     // Remove current user.
     localStorage.removeItem('userId');
+    localStorage.removeItem('context');
     // Refresh the page
     location.reload();
   };
@@ -22,18 +24,28 @@ export default function Home() {
     setDescription(currentEvent.narrative_event_description);
     setLinks(currentEvent.links);
     setContent(currentEvent.narrative_event_content);
+
+    let context = localStorage.getItem('context');
+    let newContext = `${context}
+
+    ${currentEvent.narrative_event_content}
+    `
+    setContext(newContext);
+    localStorage.setItem('context', newContext);
     setLoading(false);
   };
 
   const followLink = async (link) => {
     setLoading(true);
     let userId = localStorage.getItem('userId');
+    let context = localStorage.getItem('context');
     // Progress the story
     const data = {
       user: userId,
       linkToFollow: link.id,
       isNewUser: false,
       currentTimelineEvent: currentTimelineEventId,
+      context: context
     }
     const response = await axios.post(`/api/follow-link`, data);
     renderEvent(response.data.data)
@@ -45,13 +57,15 @@ export default function Home() {
 
       // Make or set a user
       let userId = localStorage.getItem('userId');
+      let context = localStorage.getItem('context');
       let isNewUser = false;
 
-      if (!userId) {
+      if (!userId || !context) {
         // Generate a new user ID.
         userId = "id" + Math.random().toString(16).slice(2)
         // Set the ID in local storage.
         localStorage.setItem('userId', userId);
+        localStorage.setItem('context', '');
         isNewUser = true;
       }
 
@@ -60,6 +74,7 @@ export default function Home() {
         user: userId,
         linkToFollow: null,
         isNewUser,
+        context,
       }
       const response = await axios.post(`/api/follow-link`, data);
       renderEvent(response.data.data)

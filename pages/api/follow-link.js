@@ -14,6 +14,7 @@ export default async (req, res) => {
     const linkToFollow = req.body.linkToFollow;
     const isNewUser = req.body.isNewUser;
     const currentTimelineEvent = req.body.currentTimelineEvent;
+    const context = req.body.context
 
     const fictioneersClient = new Fictioneers({
       apiKey: process.env.FIC_API_KEY,
@@ -61,7 +62,7 @@ export default async (req, res) => {
       try {
         const completion = await openai.createCompletion({
           model: "text-davinci-003",
-          prompt: generatePrompt(currentEventData.narrative_event_description),
+          prompt: generatePrompt(currentEventData.narrative_event_description, context),
           temperature: 0.6,
           max_tokens: 1024,
         });
@@ -108,7 +109,7 @@ export default async (req, res) => {
       try {
         const completion = await openai.createCompletion({
           model: "text-davinci-003",
-          prompt: generatePrompt(currentEventData.narrative_event_description),
+          prompt: generatePrompt(currentEventData.narrative_event_description, context),
           temperature: 0.6,
           max_tokens: 1024,
         });
@@ -137,7 +138,11 @@ export default async (req, res) => {
   }
 };
 
-function generatePrompt(description) {
-  return `Write a 50 word paragraph for my story using the following prompt.
-  ${description}`;
+function generatePrompt(description, context) {
+  return `
+  I have a story about an inspector who is attending a crime on a boat.
+  Could you write a 50 word paragraph following on from my story in where ${description}?
+
+  The story so far is this:
+  ${context}`;
 }
