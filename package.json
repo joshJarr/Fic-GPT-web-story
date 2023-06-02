@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.24.0",
-    "next": "^12.0.10",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "autoprefixer": "10.4.14",
+    "axios": "^0.24.0",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
+    "fictioneers": "^1.5.0",
+    "next": "^12.0.10",
     "postcss": "8.4.23",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "tailwindcss": "3.3.1"
   },
   "scripts": {
