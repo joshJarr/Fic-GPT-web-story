@@ -9,6 +9,7 @@
     "eslint-config-next": "13.3.1",
     "fictioneers": "^1.5.0",
     "next": "^12.0.10",
+    "openai": "^3.2.1",
     "postcss": "8.4.23",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

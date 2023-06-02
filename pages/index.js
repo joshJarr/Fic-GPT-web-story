@@ -6,6 +6,7 @@ export default function Home() {
   const [title, setTitle] = useState('');
   const [currentTimelineEventId, setCurrentTimelineEventId] = useState('');
   const [description, setDescription] = useState('');
+  const [content, setContent] = useState('');
   const [links, setLinks] = useState([]);
 
   const resetUser = () => {
@@ -20,6 +21,7 @@ export default function Home() {
     setTitle(currentEvent.narrative_event_title);
     setDescription(currentEvent.narrative_event_description);
     setLinks(currentEvent.links);
+    setContent(currentEvent.narrative_event_content);
     setLoading(false);
   };
 
@@ -73,6 +75,7 @@ export default function Home() {
         <div>
           <h1 class="text-2xl mb-2">{title}</h1>
           <p class="mb-2">{description}</p>
+          <p class="mb-2">{content}</p>
           <ul class="flex">
             {
               links.map((link) => (
