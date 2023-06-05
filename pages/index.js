@@ -47,6 +47,12 @@ export default function Home() {
       currentTimelineEvent: currentTimelineEventId,
       context: context
     }
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const disable_gpt = searchParams.get("no_ai")
+    if (disable_gpt) {
+      data.disable_gpt = true;
+    }
     const response = await axios.post(`/api/follow-link`, data);
     renderEvent(response.data.data)
   }

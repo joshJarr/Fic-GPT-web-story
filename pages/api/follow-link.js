@@ -15,6 +15,7 @@ export default async (req, res) => {
     const isNewUser = req.body.isNewUser;
     const currentTimelineEvent = req.body.currentTimelineEvent;
     const context = req.body.context
+    const disable_gpt = req.body.disable_gpt || false;
 
     const fictioneersClient = new Fictioneers({
       apiKey: process.env.FIC_API_KEY,
@@ -56,6 +57,11 @@ export default async (req, res) => {
         narrative_event_id: newCurrentTimelineEvent.narrative_event_id,
         narrative_event_title: newCurrentTimelineEvent.narrative_event_title,
         narrative_event_description: newCurrentTimelineEvent.narrative_event_description,
+      }
+
+      if (disable_gpt) {
+        res.status(200).json({data: currentEventData});
+        return;
       }
 
       // Fetch the narrative event content from OpenAI.
@@ -104,6 +110,10 @@ export default async (req, res) => {
 
 
 
+      if (disable_gpt) {
+        res.status(200).json({data: currentEventData});
+        return;
+      }
 
       // Fetch the narrative event content from OpenAI.
       try {
