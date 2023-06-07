@@ -14,16 +14,11 @@ export default async (req, res) => {
     const linkToFollow = req.body.linkToFollow;
     const isNewUser = req.body.isNewUser;
     const currentTimelineEvent = req.body.currentTimelineEvent;
-    const context = req.body.context
-    const disable_gpt = req.body.disable_gpt || false;
 
     const fictioneersClient = new Fictioneers({
       apiKey: process.env.FIC_API_KEY,
       userId: userId
     });
-
-    // Probably not needed, but just in case.
-    fictioneersClient.setUserId({userId});
 
     if (!userId) {
       throw new Error('No user ID provided.')
@@ -37,112 +32,32 @@ export default async (req, res) => {
           disableTimeGuards: false,
           pauseAtBeats: false
         })
-        // Have a lil nap, if we start asking for timeline events too quickly it breaks!
-        // await timeout(4000);
+
       } catch (error) {
-        console.log('Oh we cant create a user, how odd!', error)
+        console.error('Oh we cant create a user, how odd!', error)
       }
     }
 
-    if (linkToFollow && currentTimelineEvent) {
-      const response = await fictioneersClient.followLinkUserTimelineEvent({linkId: linkToFollow, timelineEventId: currentTimelineEvent});
+    const response = linkToFollow && currentTimelineEvent
+      ? await fictioneersClient.followLinkUserTimelineEvent({linkId: linkToFollow, timelineEventId: currentTimelineEvent})
+      : await fictioneersClient.getUserTimelineEvents()
 
-      const allChangedTimelineEvents = response.meta.changed_timeline_events;
-      const newCurrentTimelineEvent = allChangedTimelineEvents.find(obj => obj.state === 'ACTIVE');
+    const allTimelineEvents = linkToFollow && currentTimelineEvent
+      ? response.meta.changed_timeline_events
+      : response.data
 
-      const currentEventData = {
-        id: newCurrentTimelineEvent.id,
-        state: newCurrentTimelineEvent.state,
-        links: newCurrentTimelineEvent.links,
-        narrative_event_id: newCurrentTimelineEvent.narrative_event_id,
-        narrative_event_title: newCurrentTimelineEvent.narrative_event_title,
-        narrative_event_description: newCurrentTimelineEvent.narrative_event_description,
+      const newTimelineEvent = allTimelineEvents.find(obj => obj.state === 'ACTIVE');
+
+      const newEventData = {
+        id: newTimelineEvent.id,
+        state: newTimelineEvent.state,
+        links: newTimelineEvent.links,
+        narrative_event_id: newTimelineEvent.narrative_event_id,
+        narrative_event_title: newTimelineEvent.narrative_event_title,
+        narrative_event_description: newTimelineEvent.narrative_event_description,
       }
 
-      if (disable_gpt) {
-        res.status(200).json({data: currentEventData});
-        return;
-      }
-
-      // Fetch the narrative event content from OpenAI.
-      try {
-        const completion = await openai.createCompletion({
-          model: "text-davinci-003",
-          prompt: generatePrompt(currentEventData.narrative_event_description, context),
-          temperature: 0.6,
-          max_tokens: 1024,
-        });
-
-        currentEventData.narrative_event_content = completion.data.choices[0].text;
-        console.log('=========txt=========', completion)
-
-        res.status(200).json({data: currentEventData});
-      } catch(error) {
-        // Consider adjusting the error handling logic for your use case
-        if (error.response) {
-          console.error(error.response.status, error.response.data);
-          res.status(error.response.status).json(error.response.data);
-        } else {
-          console.error(`Error with OpenAI API request: ${error.message}`);
-          res.status(500).json({
-            error: {
-              message: 'An error occurred during your request.',
-            }
-          });
-        }
-      }
-    } else {
-
-      // Fetch this users current events.
-      const timelineEvents = await fictioneersClient.getUserTimelineEvents();
-
-      const allTimelineEvents = timelineEvents.data;
-      const currentTimelineEvent = allTimelineEvents.find(obj => obj.state === 'ACTIVE');
-
-      const currentEventData = {
-        id: currentTimelineEvent.id,
-        state: currentTimelineEvent.state,
-        links: currentTimelineEvent.links,
-        narrative_event_id: currentTimelineEvent.narrative_event_id,
-        narrative_event_title: currentTimelineEvent.narrative_event_title,
-        narrative_event_description: currentTimelineEvent.narrative_event_description,
-      }
-
-
-
-      if (disable_gpt) {
-        res.status(200).json({data: currentEventData});
-        return;
-      }
-
-      // Fetch the narrative event content from OpenAI.
-      try {
-        const completion = await openai.createCompletion({
-          model: "text-davinci-003",
-          prompt: generatePrompt(currentEventData.narrative_event_description, context),
-          temperature: 0.6,
-          max_tokens: 1024,
-        });
-
-        currentEventData.narrative_event_content = completion.data.choices[0].text;
-
-        console.log('=========txt=========', completion.data.choices)
-        res.status(200).json({data: currentEventData});
-      } catch(error) {
-        // Consider adjusting the error handling logic for your use case
-        if (error.response) {
-          console.error(error.response.status, error.response.data);
-          res.status(error.response.status).json(error.response.data);
-        } else {
-          console.error(`Error with OpenAI API request: ${error.message}`);
-          res.status(500).json({
-            error: {
-              message: 'An error occurred during your request.',
-            }
-          });
-        }
-      }
-    }
+      res.status(200).json({event: newEventData});
   } else {
     res.status(405).json({message: 'POST requests only.'});
   }
