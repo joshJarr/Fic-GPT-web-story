@@ -29,7 +29,6 @@ export default async (req, res) => {
         size: "512x512"
       })
 
-      console.log(response)
       const image_url = response.data.data[0].url
 
       res.status(200).json({url: image_url});

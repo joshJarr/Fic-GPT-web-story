@@ -33,7 +33,6 @@ export default function Home() {
   };
 
   const renderImage = (imageUrl) => {
-    console.log('rendering image', imageUrl);
     setImage(imageUrl);
     setLoadingImage(false);
   };
@@ -124,7 +123,6 @@ export default function Home() {
       }
 
       text = await axios.post(`/api/generate-text`, data);
-      console.log('text', text);
       renderText(text.data.message)
 
       // Record the message history in LocalStorage.
