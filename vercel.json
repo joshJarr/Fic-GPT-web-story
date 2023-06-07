@@ -2,12 +2,6 @@
   "functions": {
     "pages/api/**/*.js": {
       "maxDuration": 60
-    },
-    "api/generate-text.js": {
-      "maxDuration": 60
-    },
-    "api/*.js": {
-      "maxDuration": 60
     }
   }
 }
