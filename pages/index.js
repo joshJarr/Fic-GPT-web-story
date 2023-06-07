@@ -16,7 +16,7 @@ export default function Home() {
   const [noAi, setNoAi] = useState(false);
 
   const resetUser = () => {
-    // Remove current user.
+    // Remove current user
     localStorage.removeItem('userId');
     localStorage.removeItem('messages');
     // Refresh the page
