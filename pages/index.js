@@ -10,10 +10,13 @@ export default function Home() {
   const [currentTimelineEventId, setCurrentTimelineEventId] = useState('');
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
-  const [messages, setMessages] = useState([]);
   const [image, setImage] = useState('');
   const [links, setLinks] = useState([]);
   const [noAi, setNoAi] = useState(false);
+  const [summarizingHistory, setSummarizingHistory] = useState(false);
+
+  // Message history count until we need to summarize the story.
+  const STORY_SUMMARY_LIMIT = 20;
 
   const resetUser = () => {
     // Remove current user
@@ -40,30 +43,54 @@ export default function Home() {
   const renderText = (message) => {
     const text = message
     setContent(text);
-
-    let context = localStorage.getItem('messages');
-
-    messages=[
-      {"role": "user", "content": "Who won the world series in 2020?"},
-      {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
-      {"role": "user", "content": "Where was it played?"}
-  ]
-
-    // TODO: Set messages in local storage.
-    // let newContext = `${context}
-
-    // ${text}
-    // `
-    // setContext(newContext);
-    // localStorage.setItem('context', newContext);
-
     setLoadingContent(false);
   };
+
+  // Take the first X messages and summaries them
+  const summariesStoryMessages = async (messages) => {
+    setSummarizingHistory(true);
+    const amountMessagesToSummarize = messages.length;
+    const assistantMessages = messages.filter((message) => (message.role === 'assistant' || message.role === 'system'))
+
+    if (assistantMessages.length === 0) {
+      console.error('No assistant messages found in message history.')
+      errorMessage(`Error: Unable to summaries story, see console for details.`)
+    }
+
+    const assistantMessageContent = assistantMessages.map((message) => message.content).join('\n\n');
+
+    try {
+      const summaryResponse = await axios.post(`/api/summaries-story`, {story: assistantMessageContent});
+      const summary = summaryResponse.data.summary;
+
+      const summaryMessage = {
+        "role": "system",
+        "content": `Summary of the next part of the story:
+        ${summary}`
+      };
+
+      let messageHistory = JSON.parse(localStorage.getItem('messages'));
+      messageHistory.splice(0, amountMessagesToSummarize, summaryMessage);
+
+      localStorage.setItem('messages', JSON.stringify(messageHistory));
+    } catch (error) {
+      setErrorMessage(`Error: Unable to progress story, see console for details.`)
+      throw error;
+    }
+    setSummarizingHistory(false);
+  }
+
+
 
   const storeMessageHistory = (role, content) => {
     let messages = localStorage.getItem('messages');
     messages = messages ? JSON.parse(messages) : [];
     messages.push({role, content});
+
+    if (messages.length > STORY_SUMMARY_LIMIT && !summarizingHistory) {
+      summariesStoryMessages(messages);
+    }
+
     localStorage.setItem('messages', JSON.stringify(messages));
   }
 
@@ -167,9 +194,11 @@ export default function Home() {
         </div>
       }
       <div className={`flex flex-col md:flex-row ${loadingEvent ? "loading" : ""}`}>
-        <div className='polaroid flex-1'>
-          <div className={`photo-filter ${!loadingImage && 'loaded'}`}> </div>
-          { loadingImage ? <img className='' src="https://placehold.co/512x512" /> : <img src={image} /> }
+        <div className='flex-1'>
+          <div className='polaroid'>
+            <div className={`photo-filter ${!loadingImage && 'loaded'}`}> </div>
+            { loadingImage ? <img className='' src="https://placehold.co/512x512" /> : <img src={image} /> }
+          </div>
         </div>
         <div className='document flex-1 p-12 xl:p-28'>
           <p className='underline text-center pb-12'><b className="redacted px-8">REDACTED</b> Police Dep</p>
@@ -194,7 +223,7 @@ export default function Home() {
             {
               links.map((link) => (
                 <li className={`pb-2 list-disc ${!link.followable && 'hidden'}`} key={link.id}>
-                  <button className={`underline hover:decoration-wavy ${loadingContent && 'redacted' }`} onClick={()=> {followLink(link)}} disabled={loadingContent} >
+                  <button className={`underline text-left hover:decoration-wavy ${loadingContent && 'redacted' }`} onClick={()=> {followLink(link)}} disabled={loadingContent} >
                     {link.label}
                   </button>
                 </li>
