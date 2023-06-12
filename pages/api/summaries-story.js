@@ -47,5 +47,10 @@ export default async (req, res) => {
 const generatePrompt = (story) => `
   Summaries the key plot points in this story so far in as few words as possible while retaining detail and accuracy.
   Please keep this summary under 300 words.
+
+  Then reiterate the last two points in the story so it can continue on from there.
+
+  Story summary:
   ${story}
+
 `

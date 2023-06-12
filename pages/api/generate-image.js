@@ -34,6 +34,19 @@ export default async (req, res) => {
       res.status(200).json({url: image_url});
 
     } catch(error) {
+      if (error.response.data.type === 'invalid_request_error') {
+        // image generation blocked by safety prompt - generate a generic safe image.
+        const response = await openai.createImage({
+          prompt: generatePrompt('a yacht on the harbour with police boats nearby'),
+          n: 1,
+          size: "512x512"
+        })
+
+        const image_url = response.data.data[0].url
+
+        res.status(200).json({url: image_url});
+        return;
+      }
       if (error.response) {
         console.error(error.response.status, error.response.data);
         res.status(error.response.status).json(error.response.data);
