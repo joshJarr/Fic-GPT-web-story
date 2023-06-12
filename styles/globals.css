@@ -58,7 +58,7 @@ body {
 .loading > .document {
   transform: translate(150%, 120px) rotate(-2deg);
 }
-.loading > .polaroid {
+.loading .polaroid {
   transform: translate(-200%, -60px) rotate(-40deg);
 }
 
