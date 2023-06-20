@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+// TODO: Document this!
 export default function Home() {
   const [loadingEvent, setLoadingEvent] = useState(true);
   const [loadingContent, setLoadingContent] = useState(false);
