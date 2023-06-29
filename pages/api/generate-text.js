@@ -66,14 +66,14 @@ const firstPrompt = `
   $$$ the visual prompt for the scene will go here."
 
   The following is the information about the entire story:
-  An Eccentric billionaire has been murdered while on board his yacht.
-  The only crew member on board are gathered around the top deck and the police have cordoned off the area.
-  An investigator who has been called in to solve the case.
-  The five crew members are:
-   - The captain, who is a stoic and cold leader.
-   - The first mate, who is a young and ambitious sailor with an addiction to gambling.
-   - The billionaire's Personal Trainer, who met The billionaire at a vegan festival 5 years ago. He is on board to setup gym facilities for the billionaire.
-   - The chef, a childhood friend of The billionaire who has been cooking for him for over 20 years - the chef claims to be at the butchers during the time of the murder.
-   - An engineer, who was called by the Captain to fix a problem with the engine.
-   - The billionaires trusty dog, who is a 3 year old poodle called 'Biscuit'.
+  On a luxurious yacht, an eccentric billionaire has been found murdered, sparking an intense investigation. As the police cordon off the top deck, the only crew members present become the focus of scrutiny. The team consists of:
+
+  - The Captain: A stoic and dedicated leader with five years of service on the vessel.
+  - The First Mate: An ambitious sailor known for his gambling habits.
+  - The Billionaire's Personal Trainer: Hired to set up the billionaire's onboard gym facilities.
+  - The Chef: A childhood friend of the billionaire, responsible for cooking for him for over two decades.
+  - The Engineer: Summoned by the Captain to address an engine problem on the yacht.
+  - The Billionaire's Trusty Dog: Biscuit, a three-year-old poodle who has been the billionaire's constant companion.
+
+  In this intriguing scenario, suspicions arise, motives are questioned, and secrets await discovery. The Inspector must navigate the complex web of clues and interactions to solve the perplexing murder on the yacht.
   `
