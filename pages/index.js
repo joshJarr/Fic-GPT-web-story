@@ -208,7 +208,6 @@ export default function Home() {
 
   return (
     <div className="container mx-auto mt-8">
-      <button className="underline text-white" onClick={resetUser}>Reset User</button>
       {/* { loadingEvent && <p>Loading...</p> } */}
       { errorMessage && <div className="error">
           <p>{errorMessage}</p>
@@ -253,7 +252,9 @@ export default function Home() {
           </ul>
         </div>
       </div>
-
+      <div className="text-right mt-6 mb-6">
+        <button className="underline text-white text-right" onClick={resetUser}>Reset User</button>
+      </div>
       <div className={`flash ${loadingEvent && 'active'}`}></div>
     </div>
   );
